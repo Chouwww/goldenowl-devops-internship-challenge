@@ -2,7 +2,7 @@ name: Node.js CI/CD Pipeline
 
 on:
   push:
-    branches: [ "main", "feature/*" ]
+    branches: [ "master", "feature/*" ]
 
 jobs:
   test:
@@ -23,7 +23,7 @@ jobs:
 
   deploy:
     needs: test
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
