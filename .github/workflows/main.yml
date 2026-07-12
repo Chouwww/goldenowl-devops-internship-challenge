@@ -5,10 +5,10 @@ on:
     branches: [ "master", "feature/*" ]
 
 jobs:
+  # JOB 1: Test ứng dụng Node.js
   test:
     runs-on: ubuntu-latest
-    steps:
-      
+    steps:      
       - uses: actions/checkout@v4
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -21,8 +21,22 @@ jobs:
       - name: Run tests
         run: cd src && npm test --if-present
 
+  # JOB 2: Quét bảo mật hạ tầng với Checkov
+  security-scan:
+    name: Terraform Security Scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Checkov
+        uses: bridgecrewio/checkov-action@master
+        with:
+          directory: terraform/
+          framework: terraform
+          soft_fail: true # Báo lỗi nhưng không dừng pipeline để bạn dễ dàng debug report
+
+  # JOB 3: Deploy (Chỉ chạy khi Test & Scan thành công và ở nhánh master)
   deploy:
-    needs: test
+    needs: [test, security-scan]
     if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     steps:
