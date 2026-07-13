@@ -125,10 +125,35 @@ goldenowl-devops-internship-challenge/
 | Deployment Method | GitHub Actions + SSH |
 | Application URL | http://52.78.154.3/ |
 
-**Deployment Result**
-
-<img width="953" height="217" alt="image" src="https://github.com/user-attachments/assets/70338435-71c8-463c-9440-f4b3d66fd8f3" />
 ---
+
+# 6. Deployment Results
+
+The application was successfully deployed to AWS EC2 through the automated GitHub Actions deployment pipeline.
+
+### AWS EC2 Instance
+
+<img width="1912" height="306" alt="image" src="https://github.com/user-attachments/assets/8082f92e-1dec-48db-820a-1e5a1e5a146c" />
+
+### Docker Hub Repository
+
+<img width="962" height="628" alt="image" src="https://github.com/user-attachments/assets/5eb75236-ba4d-4d54-ad87-b79b1d7899ce" />
+
+### Running Docker Container
+
+<img width="950" height="130" alt="image" src="https://github.com/user-attachments/assets/e4e8e828-0e36-4eee-b53f-c24c1af811a4" />
+
+### Running Application
+
+The application is successfully deployed and can be accessed via the EC2 public IP.
+
+**Endpoint**
+
+```
+http://52.78.154.3/
+```
+<img width="923" height="196" alt="image" src="https://github.com/user-attachments/assets/6ee16019-a042-4630-93c0-d1fea8b2a479" />
+
 
 
 
