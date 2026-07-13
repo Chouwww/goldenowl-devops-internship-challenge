@@ -1,0 +1,121 @@
+# CI/CD & DevSecOps Implementation Report
+
+**Author:** Nguyen Thai Bao Chau
+**Student ID:** 23520173
+**University:** University of Information Technology (UIT)
+
+## 1. Project Objectives
+
+The implemented solution fulfills the following requirements:
+
+* Fork the provided repository into a personal GitHub repository.
+* Containerize the Node.js application using Docker.
+* Provision infrastructure automatically using Terraform (Infrastructure as Code).
+* Enforce security standards using Checkov for IaC static analysis.
+* Configure an automated CI/CD pipeline with GitHub Actions.
+* Automatically trigger Continuous Integration when code is pushed to the `feature/*` or `master` branch.
+* Build and publish Docker images to Docker Hub.
+* Automatically deploy the latest application version to AWS EC2 (restricted to the `master` branch).
+* Provide a publicly accessible deployment endpoint.
+
+## 2. Deployment
+
+* **Application URL:** `(http://52.78.154.3/)`
+
+## 3. System Architecture
+
+Figure 1 illustrates the overall architecture of the implemented CI/CD pipeline. The workflow begins when source code is pushed to a GitHub feature branch, which automatically triggers the GitHub Actions CI workflow.
+
+The CI pipeline installs project dependencies and executes automated tests. Concurrently, Checkov performs static security scanning on the Terraform IaC code. Once the tests and security scans are successful, and the code is merged into the `master` branch, the CD pipeline is triggered. A Docker image is built and pushed to Docker Hub. The CD pipeline then connects to the AWS EC2 instance via SSH, pulls the latest Docker image, and redeploys the application automatically.
+
+*(Figure 1. Overall CI/CD System Architecture)*
+
+
+The architecture consists of the following components:
+
+* GitHub Repository
+* GitHub Actions (CI/CD Engine)
+* Terraform (Infrastructure Provisioning)
+* Checkov (Security Scanning)
+* Docker & Docker Hub
+* AWS EC2 & Security Groups
+* End Users
+
+## 4. Technologies Used
+
+| Component | Technology |
+| --- | --- |
+| **Programming Language** | JavaScript |
+| **Application Framework** | Node.js, Express |
+| **Version Control** | GitHub |
+| **Containerization** | Docker |
+| **Container Registry** | Docker Hub |
+| **CI/CD** | GitHub Actions |
+| **Infrastructure as Code** | Terraform |
+| **Security Scanning (SAST)** | Checkov |
+| **Cloud Platform** | Amazon Web Services (AWS EC2) |
+| **Operating System** | Ubuntu Linux |
+
+## 5. CI/CD Pipeline
+
+### 5.1 Continuous Integration & Security Scanning
+
+The Continuous Integration workflow is triggered automatically whenever changes are pushed to the `feature/*` or `master` branches. The process performs the following tasks in parallel to optimize execution time:
+
+* **Application Testing:** Checkout source code, install dependencies, and execute automated tests.
+* **Infrastructure Security:** Run Checkov against the Terraform directory to detect cloud security vulnerabilities before provisioning.
+
+If any CI stage fails, the deployment is not executed.
+
+### 5.2 Continuous Deployment
+
+When code is merged into the `master` branch and the CI workflow completes successfully, the CD deployment process is executed automatically.
+The CD workflow performs the following tasks:
+
+* Build the Docker image.
+* Push the Docker image to Docker Hub.
+* Connect to AWS EC2 via SSH.
+* Pull the latest Docker image from Docker Hub.
+* Stop and remove the running container.
+* Deploy the updated container.
+
+This process ensures that every validated build on the master branch is automatically deployed without manual intervention.
+
+## 6. Docker Implementation
+
+The application is containerized using Docker to ensure consistent deployment across environments. Docker best practices applied:
+
+* Multi-stage Docker build.
+* Production-only dependencies in the final image.
+* Non-root user execution (`appuser`) for enhanced security.
+* Minimal image footprint.
+* Exposed application port for external access.
+
+These practices improve portability, security, and deployment efficiency.
+
+## 7. Branch Strategy
+
+The project follows a feature-branch workflow.
+
+* `master` contains production-ready code. Continuous Deployment is strictly limited to this branch.
+* `feature/*` branches are used for development. Every push to a feature branch triggers the CI workflow for early validation.
+* Changes are merged into `master` after successfully passing automated tests and security scans.
+
+This strategy supports isolated development while maintaining a highly stable production branch.
+
+## 8. DevOps Practices
+
+The implementation incorporates several core DevOps and DevSecOps principles:
+
+* **Infrastructure as Code (IaC):** Using Terraform for reproducible and immutable infrastructure deployments.
+* **Shift-left Security:** Integrating Checkov early in the pipeline to analyze IaC configurations.
+* Continuous Integration and Continuous Deployment.
+* Automated testing.
+* Containerized deployment.
+* Version-controlled pipeline configuration.
+* Environment consistency across development and production.
+
+## 9. Conclusion
+
+This project demonstrates a complete CI/CD and DevSecOps implementation for a Node.js application. By leveraging Docker, GitHub Actions, Docker Hub, Terraform, Checkov, and AWS EC2, the solution automates testing, infrastructure provisioning, security validation, container image creation, and deployment. The resulting architecture is maintainable, highly secure, reproducible, and adheres strictly to modern DevOps practices.
+
