@@ -1,122 +1,138 @@
-# CI/CD & DevSecOps Implementation Report
+# GOLDEN OWL DEVOPS INTERNSHIP CHALLENGE REPORT
 
 **Author:** Nguyen Thai Bao Chau
+
 **Student ID:** 23520173
+
 **University:** University of Information Technology (UIT)
 
-## 1. Project Objectives
+---
 
-The implemented solution fulfills the following requirements:
+# 1. Technology Stack
 
-* Fork the provided repository into a personal GitHub repository.
-* Containerize the Node.js application using Docker.
-* Provision infrastructure automatically using Terraform (Infrastructure as Code).
-* Enforce security standards using Checkov for IaC static analysis.
-* Configure an automated CI/CD pipeline with GitHub Actions.
-* Automatically trigger Continuous Integration when code is pushed to the `feature/*` or `master` branch.
-* Build and publish Docker images to Docker Hub.
-* Automatically deploy the latest application version to AWS EC2 (restricted to the `master` branch).
-* Provide a publicly accessible deployment endpoint.
+| Category | Technology |
+|----------|------------|
+| Backend | Node.js, Express |
+| Programming Language | JavaScript |
+| Version Control | GitHub |
+| Containerization | Docker |
+| Container Registry | Docker Hub |
+| CI/CD | GitHub Actions |
+| Infrastructure as Code | Terraform |
+| Security Scanning | Checkov |
+| Cloud Platform | AWS EC2 (Ubuntu Server) |
 
-## 2. Deployment
+---
 
-* **Application URL:** `(http://52.78.154.3/)`
+# 2. System Architecture
 
-## 3. System Architecture
+The project implements an automated CI/CD pipeline for deploying a Dockerized Node.js application on AWS EC2.
 
-Figure 1 illustrates the overall architecture of the implemented CI/CD pipeline. The workflow begins when source code is pushed to a GitHub feature branch, which automatically triggers the GitHub Actions CI workflow.
-
-The CI pipeline installs project dependencies and executes automated tests. Concurrently, Checkov performs static security scanning on the Terraform IaC code. Once the tests and security scans are successful, and the code is merged into the `master` branch, the CD pipeline is triggered. A Docker image is built and pushed to Docker Hub. The CD pipeline then connects to the AWS EC2 instance via SSH, pulls the latest Docker image, and redeploys the application automatically.
-
-*(Figure 1. Overall CI/CD System Architecture)*
+**Figure 1. Overall System Architecture**
 
 <img width="1540" height="557" alt="image" src="https://github.com/user-attachments/assets/9bf02906-8c1b-415b-bb59-32714211a385" />
 
-The architecture consists of the following components:
+### Workflow
 
-* GitHub Repository
-* GitHub Actions (CI/CD Engine)
-* Terraform (Infrastructure Provisioning)
-* Checkov (Security Scanning)
-* Docker & Docker Hub
-* AWS EC2 & Security Groups
-* End Users
+1. Developers push source code to the GitHub repository.
+2. Pushes to the **feature/*** branches trigger the **Continuous Integration (CI)** workflow.
+3. After the Pull Request is merged into the **master** branch, the **Continuous Deployment (CD)** workflow is triggered automatically.
+4. The latest Docker image is deployed to the AWS EC2 instance, and the application becomes accessible through its public endpoint.
 
-## 4. Technologies Used
+---
 
-| Component | Technology |
-| --- | --- |
-| **Programming Language** | JavaScript |
-| **Application Framework** | Node.js, Express |
-| **Version Control** | GitHub |
-| **Containerization** | Docker |
-| **Container Registry** | Docker Hub |
-| **CI/CD** | GitHub Actions |
-| **Infrastructure as Code** | Terraform |
-| **Security Scanning (SAST)** | Checkov |
-| **Cloud Platform** | Amazon Web Services (AWS EC2) |
-| **Operating System** | Ubuntu Linux |
+# 3. CI/CD Pipeline
 
-## 5. CI/CD Pipeline
+The CI/CD pipeline is implemented using GitHub Actions.
 
-### 5.1 Continuous Integration & Security Scanning
+## 3.1 Continuous Integration
 
-The Continuous Integration workflow is triggered automatically whenever changes are pushed to the `feature/*` or `master` branches. The process performs the following tasks in parallel to optimize execution time:
+**Trigger**
 
-* **Application Testing:** Checkout source code, install dependencies, and execute automated tests.
-* **Infrastructure Security:** Run Checkov against the Terraform directory to detect cloud security vulnerabilities before provisioning.
+- Push to `feature/*`
+- Push to `master`
 
-If any CI stage fails, the deployment is not executed.
+**Pipeline Steps**
 
-### 5.2 Continuous Deployment
+1. Checkout source code.
+2. Set up the Node.js environment.
+3. Install project dependencies (`npm install`).
+4. Run application tests (`npm test`).
+5. Perform Infrastructure as Code (IaC) security scanning using Checkov.
 
-When code is merged into the `master` branch and the CI workflow completes successfully, the CD deployment process is executed automatically.
-The CD workflow performs the following tasks:
+The application testing and infrastructure security scanning jobs are executed in parallel to reduce workflow execution time. The deployment stage is executed only after all Continuous Integration jobs complete successfully.
 
-* Build the Docker image.
-* Push the Docker image to Docker Hub.
-* Connect to AWS EC2 via SSH.
-* Pull the latest Docker image from Docker Hub.
-* Stop and remove the running container.
-* Deploy the updated container.
+**Workflow Result**
 
-This process ensures that every validated build on the master branch is automatically deployed without manual intervention.
+<img width="983" height="438" alt="image" src="https://github.com/user-attachments/assets/1fd6cd65-36fa-4b4c-a49a-b03d55e39848" />
 
-## 6. Docker Implementation
+---
 
-The application is containerized using Docker to ensure consistent deployment across environments. Docker best practices applied:
+## 3.2 Continuous Deployment
 
-* Multi-stage Docker build.
-* Production-only dependencies in the final image.
-* Non-root user execution (`appuser`) for enhanced security.
-* Minimal image footprint.
-* Exposed application port for external access.
+**Trigger**
 
-These practices improve portability, security, and deployment efficiency.
+- Merge into `master`
 
-## 7. Branch Strategy
+**Pipeline Steps**
 
-The project follows a feature-branch workflow.
+1. Build the Docker image.
+2. Push the Docker image to Docker Hub.
+3. Connect to the AWS EC2 instance via SSH.
+4. Pull the latest Docker image.
+5. Stop and remove the existing application container.
+6. Start a new container using the latest image.
 
-* `master` contains production-ready code. Continuous Deployment is strictly limited to this branch.
-* `feature/*` branches are used for development. Every push to a feature branch triggers the CI workflow for early validation.
-* Changes are merged into `master` after successfully passing automated tests and security scans.
+**Workflow Result**
 
-This strategy supports isolated development while maintaining a highly stable production branch.
+<img width="935" height="447" alt="image" src="https://github.com/user-attachments/assets/420654e2-537c-4d62-bb74-91185d672c96" />
 
-## 8. DevOps Practices
+---
 
-The implementation incorporates several core DevOps and DevSecOps principles:
+# 4. Project Structure
 
-* **Infrastructure as Code (IaC):** Using Terraform for reproducible and immutable infrastructure deployments.
-* **Shift-left Security:** Integrating Checkov early in the pipeline to analyze IaC configurations.
-* Continuous Integration and Continuous Deployment.
-* Automated testing.
-* Containerized deployment.
-* Version-controlled pipeline configuration.
-* Environment consistency across development and production.
+```text
+goldenowl-devops-internship-challenge/
+├── .github/
+│   └── workflows/
+│       └── main.yml
+│
+├── src/
+│   ├── routes/
+│   ├── server/
+│   ├── tests/
+│   ├── index.js
+│   ├── package.json
+│   └── package-lock.json
+│
+├── terraform/
+│   └── main.tf
+│
+├── Dockerfile
+└── README.md
+```
 
-## 9. Conclusion
+---
 
-This project demonstrates a complete CI/CD and DevSecOps implementation for a Node.js application. By leveraging Docker, GitHub Actions, Docker Hub, Terraform, Checkov, and AWS EC2, the solution automates testing, infrastructure provisioning, security validation, container image creation, and deployment. The resulting architecture is maintainable, highly secure, reproducible, and adheres strictly to modern DevOps practices.
+# 5. Deployment
+
+| Item | Description |
+|------|-------------|
+| Cloud Platform | Amazon Web Services (AWS) |
+| Compute Service | EC2 Ubuntu Server |
+| Container Runtime | Docker Engine |
+| Container Registry | Docker Hub |
+| Deployment Method | GitHub Actions + SSH |
+| Application URL | http://52.78.154.3/ |
+
+**Deployment Result**
+
+<img width="953" height="217" alt="image" src="https://github.com/user-attachments/assets/70338435-71c8-463c-9440-f4b3d66fd8f3" />
+---
+
+
+
+
+
+
 
