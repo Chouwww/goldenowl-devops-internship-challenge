@@ -32,7 +32,7 @@ resource "aws_security_group" "web_sg" {
   }
 }
 resource "aws_instance" "web_server" {
-  ami           = "ami-0ea4d4b8dc1e46212"
+  ami           = "ami-0e4ab31f1847c850c"
   instance_type = "t3.micro"
   key_name      = "devops"               
   vpc_security_group_ids = [aws_security_group.web_sg.id]
@@ -43,11 +43,12 @@ resource "aws_instance" "web_server" {
 
   user_data = <<-EOF
               #!/bin/bash
-              yum update -y
-              yum install -y docker
-              systemctl start docker
+              apt-get update -y
+              apt-get install -y docker.io
               systemctl enable docker
-              usermod -a -G docker ec2-user
+              systemctl start docker
+              # Lưu ý: Add user 'ubuntu' vào nhóm docker
+              usermod -aG docker ubuntu 
               EOF
 }            
 
