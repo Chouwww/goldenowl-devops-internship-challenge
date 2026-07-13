@@ -30,6 +30,7 @@ The CI pipeline installs project dependencies and executes automated tests. Conc
 
 *(Figure 1. Overall CI/CD System Architecture)*
 
+<img width="1540" height="557" alt="image" src="https://github.com/user-attachments/assets/9bf02906-8c1b-415b-bb59-32714211a385" />
 
 The architecture consists of the following components:
 
